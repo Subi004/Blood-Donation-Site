@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Blood Donation System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-image: url('Awareness Pic.jpg'); /* Replace with actual image URL or path */
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    .faq-item {
+      transition: all 0.3s ease;
+    }
+    .edu-card {
+      min-height: 300px;
+      padding: 2rem;
+      margin: 1rem;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .faq-item {
+    transition: all 0.3s ease;
+    }
+    .faq-item:hover {
+      background-color: rgba(255, 255, 255, 0.95);
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .edu-card {
+      transition: all 0.3s ease;
+    }
+    .edu-card:hover {
+      transform: scale(1.03);
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    .edu-card i {
+      transition: transform 0.3s ease;
+    }
+    .edu-card:hover i {
+      transform: scale(1.1);
+    }
+
+    /* News Ticker Style */
+    .ticker-container {
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      background-color: #f3f4f6;
+      padding: 1rem 0;
+    }
+
+    .ticker-text {
+      display: inline-block;
+      white-space: nowrap;
+      font-weight: bold;
+      color: #e60000;
+      animation: scroll 20s linear infinite;
+      padding-left: 100%;
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .animate-scroll {
+      display: inline-block;
+      white-space: nowrap;
+      animation: scroll 30s linear infinite;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <!-- Navigation -->
+  <nav class="bg-red-600 text-white p-4 sticky top-0 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Blood Donation Awareness and Educational Portal</h1>
+    </div>
+  </nav>
+
+  <!-- Scrolling News Ticker -->
+  <div class="ticker-container">
+    <div id="newsTicker" class="ticker-text font-semibold text-sm px-4">
+      📢 Loading latest updates...
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="home" class="bg-transparent py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-4xl font-bold text-gray-800 mb-4">Save Lives with Blood Donation</h2>
+      <p class="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
+        Donating blood is a simple act that can save lives. Learn why your donation matters and how you can help today!
+      </p>
+    </div>
+  </section>
+
+  <!-- Educational Portal -->
+  <section id="education" class="py-16 bg-transparent">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Learn About Blood Donation</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+        <!-- Card 1 -->
+        <div class="bg-white bg-opacity-80 p-6 rounded-lg shadow-md text-center edu-card">
+          <i class="fas fa-heart text-red-500 text-5xl mb-6"></i>
+          <h3 class="text-2xl font-semibold text-gray-800 mb-4">Why Donate?</h3>
+          <p class="text-gray-600 text-lg leading-relaxed">
+            Blood donations are vital for patients facing emergencies, surgeries, or chronic illnesses like anemia or cancer. A single donation can save up to three lives by providing critical components such as red cells, plasma, and platelets.
+          </p>
+        </div>
+        <!-- Card 2 -->
+        <div class="bg-white bg-opacity-80 p-6 rounded-lg shadow-md text-center edu-card">
+          <i class="fas fa-user text-red-500 text-5xl mb-6"></i>
+          <h3 class="text-2xl font-semibold text-gray-800 mb-4">Who Can Donate?</h3>
+          <p class="text-gray-600 text-lg leading-relaxed">
+            Most healthy individuals aged 17-65, weighing at least 110 pounds, can donate blood. Eligibility depends on factors like health history, travel, and lifestyle. Check with a local blood center to confirm your suitability.
+          </p>
+        </div>
+        <!-- Card 3 -->
+        <div class="bg-white bg-opacity-80 p-6 rounded-lg shadow-md text-center edu-card">
+          <i class="fas fa-syringe text-red-500 text-5xl mb-6"></i>
+          <h3 class="text-2xl font-semibold text-gray-800 mb-4">How It Works</h3>
+          <p class="text-gray-600 text-lg leading-relaxed">
+            The blood donation process is safe and straightforward, taking about an hour. It includes a quick health screening, a short donation (5-10 minutes), and a recovery period with refreshments to ensure your well-being.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQs Section -->
+  <section id="faqs" class="py-16 bg-transparent">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Frequently Asked Questions</h2>
+      <div class="max-w-3xl mx-auto space-y-4">
+        <!-- FAQ 1 -->
+        <div class="faq-item bg-white bg-opacity-80 p-4 rounded-lg cursor-pointer" onclick="toggleFAQ(this)">
+          <h3 class="text-lg font-semibold text-gray-800">Is donating blood safe?</h3>
+          <p class="text-gray-600 hidden mt-2">
+            Yes, donating blood is very safe. Sterile equipment is used, and the process is supervised by trained professionals.
+          </p>
+        </div>
+        <!-- FAQ 2 -->
+        <div class="faq-item bg-white bg-opacity-80 p-4 rounded-lg cursor-pointer" onclick="toggleFAQ(this)">
+          <h3 class="text-lg font-semibold text-gray-800">How often can I donate?</h3>
+          <p class="text-gray-600 hidden mt-2">
+            You can donate whole blood every 56 days. Platelet donations can be made more frequently.
+          </p>
+        </div>
+        <!-- FAQ 3 -->
+        <div class="faq-item bg-white bg-opacity-80 p-4 rounded-lg cursor-pointer" onclick="toggleFAQ(this)">
+          <h3 class="text-lg font-semibold text-gray-800">Does donating blood hurt?</h3>
+          <p class="text-gray-600 hidden mt-2">
+            You may feel a brief pinch when Insertion of the needle, but the process is generally painless.
+          </p>
+        </div>
+        <!-- FAQ 4 -->
+        <div class="faq-item bg-white bg-opacity-80 p-4 rounded-lg cursor-pointer" onclick="toggleFAQ(this)">
+          <h3 class="text-lg font-semibold text-gray-800">What should I do before donating?</h3>
+          <p class="text-gray-600 hidden mt-2">
+            Ensure you’re well-hydrated, eat a healthy meal, and avoid alcohol for 24 hours. Get a good night’s sleep and bring a valid ID to your appointment.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function toggleFAQ(element) {
+      const answer = element.querySelector('p');
+      answer.classList.toggle('hidden');
+    }
+
+    const tickerMessages = [
+      "🩸 Blood Donation Camp at City Hospital on April 30, 9AM–5PM. Free health kits provided!",
+      "📅 Join our Mega Blood Drive at Central Park on May 5. Live music & refreshments await!",
+      "🚑 URGENT: O- blood needed at Sunrise Clinic. Contact +91-9876543210 immediately.",
+      "🏥 Blood donors receive free basic health checkup at participating centers this week.",
+      "💉 Tip: Stay hydrated and avoid fatty foods before donating blood for best experience.",
+      "📊 Did you know? Every 2 seconds, someone in India needs blood. Be the reason they smile.",
+      "❤️ Donate blood every 3 months if you're healthy—it's safe and lifesaving!",
+      "🧬 Learn about rare blood types in our Education Portal—know your blood group today!",
+      "🔍 Use our AI chatbot to find the nearest donation camps and real-time blood needs.",
+      "🎓 Awareness Workshop: 'Safe Blood Saves Lives'—Attend online on April 28 at 6PM."
+    ];
+
+    let currentTickerIndex = 0;
+
+    function updateTicker() {
+      const ticker = document.getElementById("newsTicker");
+      ticker.innerText = tickerMessages[currentTickerIndex];
+      currentTickerIndex = (currentTickerIndex + 1) % tickerMessages.length;
+    }
+
+    updateTicker();
+    setInterval(updateTicker, 10000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blood Donation Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <style>
+    body {
+      background-image: url('heart.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .blur-overlay {
+      backdrop-filter: blur(8px);
+      background-color: rgba(255, 255, 255, 0.107);
+      border: 1px solid rgba(255, 255, 255, 0.122);
+      box-shadow: 0 8px 32px 0 rgba(31, 111, 135, 0.673);
+      border-radius: 12px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f323;
+      border-top: 4px solid #dc2626;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      color: #dc2626;
+      font-size: 0.875rem;
+    }
+
+    .section {
+      padding: 14px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.119);
+    }
+
+    .form-container {
+      background: rgba(255, 255, 255, 0);
+      border-radius: 12px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .submit-btn {
+      background-color: #d4073e;
+      color: rgb(172, 165, 165);
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: #b91c1c;
+    }
+
+    select, input[type="text"], input[type="date"], input[type="number"] {
+      background-color: rgba(255, 255, 255, 0.107);
+      border: 1px solid rgba(255, 255, 255, 0.166);
+      color: black;
+    }
+
+    select option {
+      color: #4B4B4B;
+    }
+
+    select:focus, input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus {
+      border-color: #dc2626;
+      outline: none;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-900 bg-opacity-50">
+  <div class="min-h-screen flex items-center justify-center px-4">
+    <div class="form-container blur-overlay text-white">
+      <h2 class="text-3xl font-bold text-center text-red-600 mb-6">🩸 Blood Donation Form</h2>
+
+      <form id="donorForm" class="space-y-5">
+        <!-- Name -->
+        <div class="section">
+          <label class="block text-sm font-medium text-white">Your Name</label>
+          <input type="text" name="name" required placeholder="Enter your name" class="w-full p-2 mt-1" />
+        </div>
+
+        <!-- Age -->
+        <div class="section">
+          <label class="block text-sm font-medium text-white">Age</label>
+          <input type="number" name="age" required placeholder="Enter your age" class="w-full p-2 mt-1" min="18" max="65" />
+        </div>
+
+        <!-- Blood Group -->
+        <div class="section">
+          <label class="block text-sm font-medium text-white">Blood Group</label>
+          <select name="bloodGroup" required class="w-full p-2 mt-1">
+            <option value="">Select blood group</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+        </div>
+
+        <!-- Area -->
+        <div class="section">
+          <label class="block text-sm font-medium text-white">Area/Location</label>
+          <input type="text" name="area" required placeholder="Enter area/location" class="w-full p-2 mt-1" />
+        </div>
+
+        <!-- Donation Center/Hospital -->
+        <div class="section relative">
+          <label class="block text-sm font-medium text-white">Nearest Hospital/Center</label>
+          <input type="text" name="hospital" id="hospitalInput" required placeholder="Enter hospital/center name"
+            class="w-full p-2 mt-1" autocomplete="off" />
+          <ul id="suggestions" class="absolute z-10 w-full bg-white text-black border rounded-md mt-1 hidden max-h-40 overflow-auto"></ul>
+        </div>
+
+        <!-- Last Donation Date (Optional) -->
+        <div class="section">
+          <label class="block text-sm font-medium text-white">Last Donation Date (optional)</label>
+          <input type="date" name="lastDonation" class="w-full p-2 mt-1" />
+        </div>
+
+        <!-- Contact Information -->
+        <div class="section">
+          <label class="block text-sm font-medium text-white">Contact Information</label>
+          <input type="text" name="contact" required placeholder="Phone or email" class="w-full p-2 mt-1" />
+          <div id="contactError" class="error-message text-sm mt-1"></div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button type="submit" class="submit-btn">Register as Donor</button>
+        </div>
+      </form>
+
+      <!-- Spinner -->
+      <div id="loadingSpinner" class="hidden mt-5">
+        <div class="spinner"></div>
+        <p class="text-center mt-2">Submitting your details...</p>
+      </div>
+
+      <!-- Success Message -->
+      <div id="successMessage" class="hidden mt-5 text-green-300 font-semibold text-center">
+        ✅ Thank you for registering as a donor!
+      </div>
+    </div>
+  </div>
+
+  <script>
+    emailjs.init("v-2IiJ7uCyuimoFeL"); // Replace with your actual EmailJS user ID
+
+    const form = document.getElementById("donorForm");
+    const successMessage = document.getElementById("successMessage");
+    const loadingSpinner = document.getElementById("loadingSpinner");
+    const contactInput = form.contact;
+    const contactError = document.getElementById("contactError");
+
+    const hospitalInput = document.getElementById("hospitalInput");
+    const suggestionsList = document.getElementById("suggestions");
+
+    const hospitals = [
+      "Apollo Hospitals", "AIIMS Delhi", "Fortis Healthcare", "Narayana Health",
+      "Max Hospital", "Medanta Medicity", "KIMS Hospital", "Tata Memorial",
+      "Care Hospitals", "Ruby Hall Clinic", "Manipal Hospitals"
+    ];
+
+    hospitalInput.addEventListener("input", () => {
+      const input = hospitalInput.value.toLowerCase();
+      suggestionsList.innerHTML = "";
+
+      if (input === "") {
+        suggestionsList.classList.add("hidden");
+        return;
+      }
+
+      const matches = hospitals.filter(h => h.toLowerCase().includes(input));
+      if (matches.length === 0) {
+        suggestionsList.classList.add("hidden");
+        return;
+      }
+
+      matches.forEach(hospital => {
+        const li = document.createElement("li");
+        li.textContent = hospital;
+        li.className = "p-2 hover:bg-gray-100 cursor-pointer";
+        li.addEventListener("click", () => {
+          hospitalInput.value = hospital;
+          suggestionsList.classList.add("hidden");
+        });
+        suggestionsList.appendChild(li);
+      });
+
+      suggestionsList.classList.remove("hidden");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!hospitalInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+        suggestionsList.classList.add("hidden");
+      }
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      contactError.textContent = "";
+      successMessage.classList.add("hidden");
+
+      const contactValue = contactInput.value.trim();
+      const isValidPhone = /^\d{10}$/.test(contactValue);
+      const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactValue);
+
+      if (!isValidPhone && !isValidEmail) {
+        contactError.textContent = "Please enter a valid phone number or email.";
+        return;
+      }
+
+      const data = {
+        name: form.name.value,
+        age: form.age.value,
+        bloodGroup: form.bloodGroup.value,
+        area: form.area.value,
+        hospital: hospitalInput.value,
+        lastDonation: form.lastDonation.value || "Not specified",
+        contact: contactValue
+      };
+
+      loadingSpinner.classList.remove("hidden");
+
+      emailjs.send("service_c04903m", "template_30gug2a", data)
+        .then((response) => {
+          loadingSpinner.classList.add("hidden");
+          successMessage.classList.remove("hidden");
+
+          const submitButton = document.querySelector(".submit-btn");
+          submitButton.textContent = "Registered!";
+          submitButton.disabled = true;
+
+          form.reset();
+          setTimeout(() => {
+            submitButton.textContent = "Register as Donor";
+            submitButton.disabled = false;
+          }, 3000);
+        }, (error) => {
+          loadingSpinner.classList.add("hidden");
+          alert("Error submitting form. Please try again.");
+          console.error("EmailJS error:", error);
+        });
+    });
+  </script>
+</body>
+</html>

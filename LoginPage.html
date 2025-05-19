@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Page</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+    .tabs {
+      display: none; /* Hide tabs */
+    }
+    .form-section {
+      display: block; /* Always show the login form */
+    }
+    .back-link {
+      color: white;
+      text-align: center;
+      display: block;
+      margin-top: 15px;
+      font-size: 14px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* SOS Button */
+    .sos-button {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 20px;
+      width: 100%;
+      box-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff9999;
+    }
+
+    /* Sign-up form hidden by default */
+    #signup-form {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- SOS Button -->
+    <button class="sos-button" onclick="openSOS()">🚨 SOS</button>
+
+    <!-- Login Form -->
+    <form class="form-section" id="login">
+      <h1>Login</h1>
+      <div class="input-box">
+        <input type="text" id="username" placeholder="Username" required />
+      </div>
+      <div class="input-box">
+        <input type="password" id="password" placeholder="Password" required />
+      </div>
+      <div class="remember-forgot">
+        <label><input type="checkbox" /> Remember me</label>
+        <a href="#">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn">Login</button>
+      <span class="back-link" onclick="showSignup()">Don't have an account? Sign Up</span>
+    </form>
+
+    <!-- Sign-Up Form -->
+    <form class="form-section" id="signup-form">
+      <h1>Sign Up</h1>
+      <div class="input-box">
+        <input type="text" id="new-username" placeholder="New Username" required />
+      </div>
+      <div class="input-box">
+        <input type="password" id="new-password" placeholder="New Password" required />
+      </div>
+      <button type="submit" class="btn">Create Account</button>
+      <span class="back-link" onclick="showLogin()">Already have an account? Login</span>
+    </form>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    function openSOS() {
+      window.location.href = "Emergency SOS/public/index.html"; // Redirect to SOS page
+    }
+
+    // Predefined users
+    const users = {
+      "admin123": "securePass2025",
+      "donor1": "secure123",
+      "recipient1": "recipient123",
+      "doctor1": "doctor2025",
+      "volunteer1": "volunteer456"
+    };
+
+    // Login Validation
+    document.getElementById("login").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (users[username] && users[username] === password) {
+        alert("Login Successful!");
+        window.location.href = "MainDashboard.html"; // Redirect after successful login
+      } else {
+        alert("Invalid Credentials");
+      }
+    });
+
+    // Show Sign Up form
+    function showSignup() {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("signup-form").style.display = "block";
+    }
+
+    // Show Login form
+    function showLogin() {
+      document.getElementById("signup-form").style.display = "none";
+      document.getElementById("login").style.display = "block";
+    }
+
+    // Sign-Up Validation
+    document.getElementById("signup-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const newUsername = document.getElementById("new-username").value.trim();
+      const newPassword = document.getElementById("new-password").value.trim();
+
+      if (users[newUsername]) {
+        alert("Username already exists! Please choose another one.");
+      } else {
+        users[newUsername] = newPassword;
+        alert("Sign-up successful! You can now log in.");
+        showLogin();
+      }
+    });
+  </script>
+</body>
+</html>

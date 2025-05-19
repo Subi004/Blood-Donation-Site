@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jeevan Sethu - Save Lives</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Montserrat', sans-serif;
+      overflow: hidden;
+    }
+
+    body {
+      background: url('indexbg.png') no-repeat center center/cover;
+      position: relative;
+    }
+
+    #preloader {
+      background: #fff;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #preloader img {
+      width: 80px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {transform: rotate(0deg);}
+      100% {transform: rotate(360deg);}
+    }
+
+    .overlay {
+      background: rgba(0, 0, 0, 0.6);
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      padding: 20px;
+      animation: fadeInPage 1.5s ease forwards;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes fadeInPage {
+      0% {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .logo {
+      width: 200px;
+      margin-bottom: 20px;
+      animation: fadeInLogo 2s ease forwards;
+      filter: drop-shadow(0 0 10px rgba(255, 77, 77, 0.5));
+    }
+
+    @keyframes fadeInLogo {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    h1 {
+      font-size: 3rem;
+      background: linear-gradient(to right, #ff4d4d, #ff9999);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
+      animation: slideInDown 1.2s ease-out forwards;
+    }
+
+    p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin-bottom: 30px;
+      opacity: 0;
+      animation: fadeInUp 2s ease forwards;
+      animation-delay: 0.8s;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      opacity: 0;
+      animation: fadeInUp 2s ease forwards;
+      animation-delay: 1.2s;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      background-color: #ff4d4d;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #ff1a1a;
+      transform: scale(1.1);
+    }
+
+    .drop {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: red;
+      border-radius: 50%;
+      top: -10px;
+      animation: fall 6s infinite linear;
+      opacity: 0.4;
+    }
+
+    @keyframes fall {
+      to { transform: translateY(110vh); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInDown {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .buttons {
+        flex-direction: column;
+      }
+      .logo {
+        width: 140px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="preloader">
+    <img src="https://cdn-icons-png.flaticon.com/512/2705/2705177.png" alt="Loading...">
+  </div>
+
+  <div class="overlay"></div>
+
+  <!-- Animated Blood Drops -->
+  <div class="drop" style="left: 10%; animation-delay: 0s;"></div>
+  <div class="drop" style="left: 25%; animation-delay: 1s;"></div>
+  <div class="drop" style="left: 40%; animation-delay: 2s;"></div>
+  <div class="drop" style="left: 55%; animation-delay: 3s;"></div>
+  <div class="drop" style="left: 70%; animation-delay: 4s;"></div>
+  <div class="drop" style="left: 85%; animation-delay: 5s;"></div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <img src="logoHomepage.png" alt="Jeevan Sethu Logo" class="logo" />
+    <h1>Jeevan Sethu - Bridge for life</h1>
+    <p>Be a hero. Your one donation can save up to three lives. Join us today!</p>
+    <div class="buttons">
+      <button class="btn" onclick="window.location.href='LoginPage.html'">Login</button>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('load', function() {
+      document.getElementById('preloader').style.display = 'none';
+    });
+  </script>
+</body>
+</html>
