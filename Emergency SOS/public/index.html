@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SOS Blood Request</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.4.1/dist/email.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+    }
+    .sos-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 999;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .sos-button:hover {
+      transform: scale(1.05);
+    }
+    #features {
+      display: none;
+      padding: 15px;
+    }
+    #map {
+      height: 300px;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+    .card {
+      padding: 10px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+    .card h4 {
+      margin: 5px 0;
+    }
+    .card a, .card button {
+      text-decoration: none;
+      color: #007bff;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-size: 16px;
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    input[type="text"], select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button#submitForm {
+      background: darkred;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<button class="sos-button" id="sosButton">SOS</button>
+
+<div id="features">
+  <h2>Activate SOS Alert</h2>
+  <div class="form-group">
+    <label>Your Name:</label>
+    <input type="text" id="userName" placeholder="Enter your name" required />
+  </div>
+  <div class="form-group">
+    <label>Blood Group:</label>
+    <select id="bloodGroup" required>
+      <option value="">Select Blood Group</option>
+      <option value="A+">A+</option>
+      <option value="A-">A-</option>
+      <option value="B+">B+</option>
+      <option value="B-">B-</option>
+      <option value="AB+">AB+</option>
+      <option value="AB-">AB-</option>
+      <option value="O+">O+</option>
+      <option value="O-">O-</option>
+      <option value="A1+">A1+</option>
+      <option value="A1-">A1-</option>
+      <option value="A2+">A2+</option>
+      <option value="A2-">A2-</option>
+    </select>
+  </div>
+  <button id="submitForm">Activate SOS</button>
+
+  <h3>Nearby Hospitals, Blood Banks, Donors</h3>
+  <div id="map"></div>
+  <div id="results"></div>
+</div>
+
+<script>
+  (function(){
+    emailjs.init("v-2IiJ7uCyuimoFeL"); // 🛠 Replace with your EmailJS Public Key
+  })();
+
+  const sosButton = document.getElementById('sosButton');
+  const submitForm = document.getElementById('submitForm');
+  const features = document.getElementById('features');
+  const results = document.getElementById('results');
+  let map;
+  let userLocation = {};
+
+  sosButton.addEventListener('click', () => {
+    features.style.display = 'block';
+  });
+
+  submitForm.addEventListener('click', () => {
+    const name = document.getElementById('userName').value.trim();
+    const blood = document.getElementById('bloodGroup').value.trim().toUpperCase();
+    if (!name || !blood) {
+      alert("Please enter your name and blood group.");
+      return;
+    }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        userLocation.lat = pos.coords.latitude;
+        userLocation.lng = pos.coords.longitude;
+        initMap(userLocation.lat, userLocation.lng);
+        fetchNearbyData(userLocation.lat, userLocation.lng, name, blood);
+      }, () => alert("Location access denied."));
+    }
+  });
+
+  function initMap(lat, lng) {
+    if (map) map.remove();
+    map = L.map('map').setView([lat, lng], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
+    L.marker([lat, lng]).addTo(map).bindPopup("You are here").openPopup();
+  }
+
+  function sendEmailAlert(email, hospitalName, userName, bloodGroup, lat, lng) {
+    const templateParams = {
+      to_email: email,
+      hospital_name: hospitalName,
+      user_name: userName,
+      blood_group: bloodGroup,
+      location_link: `https://www.google.com/maps?q=${lat},${lng}`
+    };
+
+    emailjs.send('service_c04903m', 'template_gj8fg6n', templateParams)
+      .then(function(response) {
+         alert('📧 Email sent successfully!');
+      }, function(error) {
+         alert('⚠️ Failed to send email.');
+         console.error(error);
+      });
+  }
+
+  async function fetchNearbyData(lat, lng, userName, bloodGroup) {
+    results.innerHTML = "<p>🔄 Fetching nearby data...</p>";
+    const radius = 10000;
+    const query = `
+      [out:json][timeout:25];
+      (
+        node["amenity"="hospital"](around:${radius},${lat},${lng});
+        node["healthcare"="blood_bank"](around:${radius},${lat},${lng});
+        node["donor"="yes"](around:${radius},${lat},${lng});
+      );
+      out body;
+    `;
+    try {
+      const response = await fetch("https://overpass-api.de/api/interpreter", {
+        method: "POST",
+        body: query,
+      });
+      const data = await response.json();
+      results.innerHTML = '';
+      if (data.elements.length === 0) {
+        results.innerHTML = "<p>No results found nearby.</p>";
+      }
+      data.elements.forEach(el => {
+        const latLng = [el.lat, el.lon];
+        const tags = el.tags || {};
+        const type = tags.amenity === 'hospital' ? 'Hospital' : tags.healthcare === 'blood_bank' ? 'Blood Bank' : 'Donor';
+        const name = tags.name || 'Unnamed';
+        const phone = tags.phone || 'N/A';
+        const email = tags.email || '';
+        const address = tags['addr:full'] || tags['addr:street'] || 'Nearby location';
+
+        const html = `
+          <div class="card">
+            <h4>${type}: ${name}</h4>
+            <p><strong>Address:</strong> ${address}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            ${email ? `<p><strong>Email:</strong> ${email}</p>` : ''}
+            <p><a href="https://www.google.com/maps?q=${latLng[0]},${latLng[1]}" target="_blank">📍 View on Map</a></p>
+            ${email ? `<p><button onclick="sendEmailAlert('${email}', '${name}', '${userName}', '${bloodGroup}', ${latLng[0]}, ${latLng[1]})">📧 Send Email Alert</button></p>` : ''}
+            ${phone !== 'N/A' ? `<p><a href="tel:${phone}">📞 Call Now</a></p>` : ''}
+          </div>
+        `;
+        results.innerHTML += html;
+        L.marker(latLng).addTo(map).bindPopup(`${type}: ${name}`);
+      });
+
+      // DEMO Hospital: SANS Hospital
+      const demoLat = lat + 0.005;
+      const demoLng = lng + 0.005;
+      const demoHtml = `
+        <div class="card">
+          <h4>Hospital: SANS Hospital</h4>
+          <p><strong>Address:</strong> Demo Street, Nearby Area</p>
+          <p><strong>Phone:</strong> +919876543210</p>
+          <p><strong>Email:</strong> soumikghosal08@gmail.com</p>
+          <p><a href="https://www.google.com/maps?q=${demoLat},${demoLng}" target="_blank">📍 View on Map</a></p>
+          <p><button onclick="sendEmailAlert('soumikghosal08@gmail.com', 'SANS Hospital', '${userName}', '${bloodGroup}', ${demoLat}, ${demoLng})">📧 Send Email Alert</button></p>
+          <p><a href="tel:+919876543210">📞 Call Now</a></p>
+        </div>
+      `;
+      results.innerHTML += demoHtml;
+      L.marker([demoLat, demoLng]).addTo(map).bindPopup("Hospital: SANS Hospital");
+
+    } catch (error) {
+      results.innerHTML = "<p>⚠ Error fetching data.</p>";
+      console.error(error);
+    }
+  }
+</script>
+
+</body>
+</html>

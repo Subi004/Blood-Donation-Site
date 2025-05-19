@@ -1,0 +1,101 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #ffdde1, #ee9ca7);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+/* Title */
+h1 {
+    font-size: 2.8rem;
+    margin-bottom: 30px;
+    color: #333;
+    text-align: center;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+select, button {
+    padding: 12px 18px;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+}
+
+select {
+    background: white;
+    color: #333;
+    border: 2px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+select:hover {
+    border-color: #007bff;
+}
+
+/* Button */
+button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Success Message */
+#successMessage {
+    margin: 10px 0;
+    color: #28a745;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Chart */
+#myChart {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 800px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2rem;
+    }
+    .controls {
+        flex-direction: column;
+    }
+    #myChart {
+        width: 100%;
+    }
+}

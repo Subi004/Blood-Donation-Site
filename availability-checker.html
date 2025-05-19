@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blood Group Availability</title>
+    <style>
+        /* Global */
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9; }
+        h1 { color: #c0392b; margin-bottom: 5px; }
+
+        /* Dashboard */
+        #dashboard { display: flex; gap: 20px; margin-bottom: 20px; }
+        .card {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            flex: 1;
+            text-align: center;
+        }
+        .card h2 { margin: 0; font-size: 1.1em; color: #555; }
+        .card p { margin: 8px 0 0; font-size: 1.6em; color: #e74c3c; }
+
+        /* Blood Group Summary Cards */
+        #bloodGroupSummary { margin-top: 30px; }
+        #bloodCards { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 10px; }
+        .blood-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: 120px;
+            text-align: center;
+            transition: transform 0.3s;
+            border-top: 5px solid #e74c3c;
+        }
+        .blood-card:hover { transform: translateY(-5px); }
+        .blood-card h3 { margin: 0; font-size: 1.4em; color: #c0392b; }
+        .blood-card p { margin: 8px 0 0; font-size: 1.1em; color: #555; }
+
+        /* Search & Results */
+        select, button { 
+            padding: 15px; 
+            margin: 10px 0; 
+            width: 250px; 
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        select { 
+            background-color: #fff; 
+            border: 2px solid #ccc; 
+            border-radius: 8px; 
+        }
+
+        button { 
+            background-color: #e74c3c; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer;
+        }
+
+        button:hover { 
+            background-color: #c0392b; 
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #e74c3c; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <h1>Blood Group Availability</h1>
+
+    <!-- Dashboard -->
+    <div id="dashboard">
+      <div class="card">
+        <h2>Total Hospitals</h2>
+        <p id="totalHospitals">–</p>
+      </div>
+      <div class="card">
+        <h2>Total Blood Banks</h2>
+        <p id="totalBanks">–</p>
+      </div>
+    </div>
+
+    <!-- Blood Group Summary as Cards -->
+    <div id="bloodGroupSummary">
+        <h2>Blood Group Summary</h2>
+        <div id="bloodCards">
+            <!-- Cards are injected here -->
+        </div>
+    </div>
+
+    <br><hr><br>
+
+    <!-- Search -->
+    <label for="bloodGroup">Choose Blood Group:</label><br>
+    <select id="bloodGroup" required>
+        <option value="">--Loading Blood Groups--</option>
+    </select>
+    <br>
+    <button onclick="searchBloodGroup()">Search</button>
+
+    <div id="result" class="hidden"></div>
+
+    <script>
+        let database = [];
+
+        // Load JSON database
+        fetch('hospital_bloodbank_inventory.json')
+            .then(res => res.json())
+            .then(data => {
+                database = data;
+                updateDashboard();
+                populateBloodGroups();
+            })
+            .catch(err => console.error('Error loading JSON:', err));
+
+        // Update dashboard counts & summary
+        function updateDashboard() {
+            const hospitals = new Set();
+            const banks     = new Set();
+            database.forEach(e => {
+                hospitals.add(e["Hospital Name"]);
+                banks.add(e["Blood Bank Name"]);
+            });
+            document.getElementById('totalHospitals').textContent = hospitals.size;
+            document.getElementById('totalBanks').textContent     = banks.size;
+
+            updateBloodGroupSummary();
+        }
+
+        // Create summary cards of blood-group counts
+        function updateBloodGroupSummary() {
+            const counts = {};
+            database.forEach(e => {
+                const hbg = e["Hospital Blood Group"];
+                const bbg = e["Blood Bank Blood Group"];
+                if (hbg) counts[hbg] = (counts[hbg] || 0) + 1;
+                if (bbg) counts[bbg] = (counts[bbg] || 0) + 1;
+            });
+
+            const sortedBG = Object.keys(counts).sort();
+            const cardsDiv = document.getElementById('bloodCards');
+            cardsDiv.innerHTML = '';
+
+            sortedBG.forEach(bg => {
+                const card = document.createElement('div');
+                card.className = 'blood-card';
+                card.innerHTML = `<h3>${bg}</h3><p>${counts[bg]} Units</p>`;
+                cardsDiv.appendChild(card);
+            });
+        }
+
+        // Populate & sort dropdown with blood groups
+        function populateBloodGroups() {
+            const bgSet = new Set();
+            database.forEach(e => {
+                bgSet.add(e["Hospital Blood Group"]);
+                bgSet.add(e["Blood Bank Blood Group"]);
+            });
+            const sortedBG = Array.from(bgSet).sort();
+            const sel = document.getElementById('bloodGroup');
+            sel.innerHTML = '<option value="">--Select Blood Group--</option>';
+            sortedBG.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g; opt.textContent = g;
+                sel.appendChild(opt);
+            });
+        }
+
+        // Filter & display search results
+        function searchBloodGroup() {
+            const group = document.getElementById('bloodGroup').value;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+            resultDiv.classList.add('hidden');
+
+            if (!group) {
+                alert('Please select a blood group.');
+                return;
+            }
+
+            const matches = [];
+            database.forEach(e => {
+                if (e["Hospital Blood Group"] === group) {
+                    matches.push({ source: 'Hospital', name: e["Hospital Name"], bloodGroup: group });
+                }
+                if (e["Blood Bank Blood Group"] === group) {
+                    matches.push({ source: 'Blood Bank', name: e["Blood Bank Name"], bloodGroup: group });
+                }
+            });
+
+            if (matches.length === 0) {
+                resultDiv.innerHTML = '<p>No availability found for selected blood group.</p>';
+                resultDiv.classList.remove('hidden');
+                return;
+            }
+
+            matches.sort((a, b) => a.name.localeCompare(b.name));
+
+            let html = `
+                <h2>Available Units of ${group}</h2>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Source</th>
+                      <th>Name</th>
+                      <th>Blood Group</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+            `;
+            matches.forEach(e => {
+                html += `
+                  <tr>
+                    <td>${e.source}</td>
+                    <td>${e.name}</td>
+                    <td>${e.bloodGroup}</td>
+                  </tr>
+                `;
+            });
+            html += '</tbody></table>';
+
+            resultDiv.innerHTML = html;
+            resultDiv.classList.remove('hidden');
+        }
+    </script>
+
+</body>
+</html>
