@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reward Dashboard - Full Upgrade</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <!-- AOS Animation Library (for scroll animations) -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+                    url('Reward System Pic.jpg') no-repeat center center/cover;
+      --card-bg: rgba(255, 255, 255, 0.1);
+      --text-color: #ffffff;
+      --badge-color: #00ff95;
+    }
+
+    body.light {
+      --background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
+                    url('Reward System Pic.jpg') no-repeat center center/cover;
+      --card-bg: rgba(0, 0, 0, 0.1);
+      --text-color: #000000;
+      --badge-color: #ff6ec4;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: var(--background);
+      min-height: 100vh;
+      overflow-x: hidden;
+      backdrop-filter: blur(5px);
+      transition: background 0.5s;
+    }
+
+    .dashboard-container {
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .toggle-mode {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #00ff95;
+      color: #000;
+      padding: 10px 18px;
+      border-radius: 30px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 255, 149, 0.4);
+      z-index: 1000;
+      transition: 0.3s;
+    }
+
+    .dashboard-header, .points-section, .rewards-section, .badges-section {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 30px 20px;
+      width: 100%;
+      max-width: 750px;
+      text-align: center;
+      color: var(--text-color);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      transition: all 0.4s;
+    }
+
+    .dashboard-header img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--badge-color);
+      margin-bottom: 20px;
+      box-shadow: 0 0 25px rgba(0, 255, 149, 0.7);
+      transition: 0.3s;
+    }
+
+    .dashboard-header img:hover {
+      transform: scale(1.05);
+    }
+
+    .user-info h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      background: linear-gradient(45deg, var(--badge-color), #00d4ff);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 15px;
+      display: inline-block;
+    }
+
+    .points-section h2, .rewards-section h2, .badges-section h2 {
+      margin-bottom: 15px;
+      font-weight: 600;
+      font-size: 24px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.2);
+      height: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, var(--badge-color), #00d4ff);
+      width: 0%;
+      transition: width 1s ease;
+    }
+
+    .claim-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, #ff6ec4, #7873f5);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .claim-btn:hover {
+      background: linear-gradient(90deg, #ff4f9b, #574feb);
+      transform: scale(1.05);
+    }
+
+    .badge-list {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .badge-item {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 10px 20px;
+      border-radius: 14px;
+      font-weight: bold;
+      min-width: 100px;
+      text-align: center;
+      transition: 0.3s;
+      position: relative;
+      color: var(--badge-color);
+    }
+
+    .badge-item.locked {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ccc;
+    }
+
+    .badge-item.locked::after {
+      content: '🔒';
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button class="toggle-mode" onclick="toggleMode()">Toggle Mode</button>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header" data-aos="fade-up">
+      <img src="Logo.jpg" alt="Logo">
+      <div class="user-info">
+        <h1>Welcome, <span id="donor-name">Soumik Ghosal</span>!</h1>
+        <div class="badge">Life Saver</div>
+      </div>
+    </div>
+
+    <!-- Points Section -->
+    <div class="points-section" data-aos="fade-up" data-aos-delay="100">
+      <h2>Your Points</h2>
+      <div class="progress-bar">
+        <div id="progress-bar" class="progress"></div>
+      </div>
+      <p id="points-text" style="margin-top:8px;">Points: 0</p>
+      <p style="margin-top:8px;">Next Milestone: 500 points for Free Health Check-up</p>
+    </div>
+
+    <!-- Rewards Section -->
+    <div class="rewards-section" data-aos="fade-up" data-aos-delay="200">
+      <h2>Claim Rewards</h2>
+      <button class="claim-btn" data-points="100">Claim 100 Points: Mobile Recharge</button>
+      <button class="claim-btn" data-points="200">Claim 200 Points: LED Bulb</button>
+      <button class="claim-btn" data-points="500">Claim 500 Points: Free Health Check-up</button>
+    </div>
+
+    <!-- Badges Section -->
+    <div class="badges-section" data-aos="fade-up" data-aos-delay="300">
+      <h2>Your Badges</h2>
+      <div class="badge-list">
+        <div class="badge-item" data-required-points="0">Life Saver</div>
+        <div class="badge-item" data-required-points="500">Hero of the Month</div>
+        <div class="badge-item" data-required-points="1000">First Drop</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JS: AOS (Animate on Scroll) -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <script>
+    AOS.init({ duration: 1000 });
+
+    let totalPoints = 1200;
+    let displayedPoints = 0;
+
+    function updatePointsDisplay() {
+      const progress = document.getElementById('progress-bar');
+      const pointsText = document.getElementById('points-text');
+      const width = Math.min((totalPoints / 1000) * 100, 100);
+      progress.style.width = width + "%";
+
+      // Animate counting points
+      const interval = setInterval(() => {
+        if (displayedPoints < totalPoints) {
+          displayedPoints += 10;
+          if (displayedPoints > totalPoints) displayedPoints = totalPoints;
+          pointsText.innerText = `Points: ${displayedPoints}`;
+        } else {
+          clearInterval(interval);
+        }
+      }, 30);
+
+      updateBadges();
+    }
+
+    function updateBadges() {
+      document.querySelectorAll('.badge-item').forEach(badge => {
+        const required = parseInt(badge.getAttribute('data-required-points'));
+        badge.classList.toggle('locked', totalPoints < required);
+      });
+    }
+
+    function toggleMode() {
+      document.body.classList.toggle('light');
+    }
+
+    document.querySelectorAll('.claim-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const points = parseInt(button.getAttribute('data-points'));
+        if (totalPoints >= points) {
+          totalPoints -= points;
+          alert(`Reward claimed for ${points} points!`);
+          displayedPoints = 0; // Restart counting
+          updatePointsDisplay();
+        } else {
+          alert("Not enough points!");
+        }
+      });
+    });
+
+    updatePointsDisplay();
+  </script>
+
+</body>
+</html>

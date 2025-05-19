@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recipient Dashboard</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Boxicons for Icons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('recepient image.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .header {
+      padding: 50px 20px 30px;
+      text-align: center;
+      background: linear-gradient(to right, #b71c1cdd, #d32f2fdd);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .header h1 {
+      font-size: 42px;
+      background: linear-gradient(to right, #ffffff, #ffcccb);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.3); }
+      to { text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.8); }
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 1100px;
+      margin: 40px auto 20px;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      text-align: center;
+      transition: all 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 16px 30px rgba(0,0,0,0.3);
+    }
+
+    .card i {
+      font-size: 60px;
+      margin-bottom: 15px;
+      color: #d32f2f;
+    }
+
+    .card h2 {
+      color: #d32f2f;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .card button {
+      background-color: #d32f2f;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .card button:hover {
+      background-color: #b71c1c;
+      transform: scale(1.05);
+    }
+
+    .logout-btn {
+      margin: 40px 0;
+      text-align: center;
+    }
+
+    .logout-btn button {
+      background: linear-gradient(90deg, #d32f2f, #ff5252);
+      background-size: 200% 200%;
+      padding: 12px 30px;
+      font-size: 16px;
+      border: none;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.5s;
+      animation: glowing 2s infinite alternate;
+    }
+
+    .logout-btn button:hover {
+      transform: scale(1.08);
+      animation: none;
+      background-position: right center;
+    }
+
+    @keyframes glowing {
+      0% { background-position: left center; }
+      100% { background-position: right center; }
+    }
+
+    @media (max-width: 600px) {
+      .header h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Welcome Recipient!</h1>
+  </div>
+
+  <div class="dashboard">
+    <!-- Blood Request Card -->
+    <div class="card">
+      <i class="bx bx-heart"></i> <!-- Updated icon for Blood Request -->
+      <h2>Request Blood</h2>
+      <p>Submit a new blood request easily and alert nearby donors.</p>
+      <button onclick="window.location.href='BloodRequestForm.html'">Create Request</button>
+    </div>
+
+    <!-- Availability Checker Card -->
+    <div class="card">
+      <i class="bx bxs-blood-drop"></i> <!-- Updated icon for Availability Checker -->
+      <h2>Availability Checker</h2>
+      <p>Check availability of different blood groups in your region.</p>
+      <button onclick="window.location.href='availability-checker.html'">Check Now</button>
+    </div>
+  </div>
+
+  <div class="logout-btn">
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    function logout() {
+      window.location.href = "MainDashboard.html"; // Redirect to login page
+    }
+  </script>
+
+</body>
+</html>
